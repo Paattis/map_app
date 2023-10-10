@@ -10,3 +10,12 @@ services:
       - 8000:8000
     env_file:
       - ./.env
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/postgresql/data/
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
