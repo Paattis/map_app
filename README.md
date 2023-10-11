@@ -1,6 +1,6 @@
 # Basic social map application example
 
-## Installation
+## Setting up a dev environment
 
 Create a .env file using the template provided
 ```
@@ -11,24 +11,34 @@ $ copy .env.template .env
 ```
 and then fill out the sensitive details in the .env file.
 
-### Backend
-The backend is built with django.
-
-
-#### Running
-To build and run
+Build and run the entire stack with
 ```
 $ docker-compose up -d --build
 ```
 
-#### Migrations
+Run the migrations
+```
+$ docker-compose exec backend python manage.py migrate
+```
 
-Make migrations with
+Create the first superuser by running the following command and following the on-screen instructions
+```
+$ docker-compose exec backend python manage.py createsuperuser
+```
+
+## Documentation
+Documentation for the REST Api is available at the `/docs` endpoint
+
+### Backend 
+The backend is built with Django 
+
+#### Migrations
+To make new migrations
 ```
 $ docker-compose exec backend python manage.py makemigrations
 ```
 
-To run the migrations with
+To run migrations
 ```
 $ docker-compose exec backend python manage.py migrate
 ```

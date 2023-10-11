@@ -17,10 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from rest_framework import routers
+from rest_framework import routers, permissions
 from rest_framework.schemas import get_schema_view
 from points import views
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -31,13 +36,17 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
-    path('openapi-schema/', get_schema_view(
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('openapi/', get_schema_view(
         title="Your Project",
         description="API for all things …",
-        version="1.0.0"
+        version="1.0.0",
+        public=True,
+        permission_classes=[permissions.IsAdminUser],
     ), name='openapi-schema'),
     path('docs/', TemplateView.as_view(
         template_name='redoc.html',
-        extra_context={'schema_url':'openapi-schema'}
+        extra_context={'schema_url':'openapi-schema'},
     ), name='redoc'),
 ]
