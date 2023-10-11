@@ -1,0 +1,1 @@
+from .userpoint import UserPoint

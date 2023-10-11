@@ -9,4 +9,9 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+RUN apt-get update
+#RUN apt-get install sudo
+RUN apt-get install binutils libproj-dev gdal-bin -y
+
+
 COPY . .
