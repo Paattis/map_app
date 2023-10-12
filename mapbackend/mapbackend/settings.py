@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django.contrib.gis',
     'points',
+    'rest_framework_gis'
 ]
 
 MIDDLEWARE = [

@@ -20,6 +20,7 @@ from django.urls import path, include
 from rest_framework import routers, permissions
 from rest_framework.schemas import get_schema_view
 from mapbackend.views import user
+from points.views import userpoint
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -29,6 +30,7 @@ from rest_framework_simplejwt.views import (
 
 router = routers.DefaultRouter()
 router.register(r'users', user.UserViewSet)
+router.register(r'userpoints', userpoint.UserPointViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
