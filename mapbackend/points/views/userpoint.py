@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions
 from points.serializers import UserPointSerializer
 from points.models import UserPoint
-
+from mapbackend.permissions import IsEditingOwnContent
 
 class UserPointViewSet(viewsets.ModelViewSet):
     """
@@ -11,4 +11,4 @@ class UserPointViewSet(viewsets.ModelViewSet):
     """
     queryset = UserPoint.objects.all().order_by('-created')
     serializer_class = UserPointSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsEditingOwnContent]

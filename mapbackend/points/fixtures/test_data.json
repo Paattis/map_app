@@ -1,0 +1,89 @@
+[
+  {
+    "model": "auth.user",
+    "fields": {
+      "id": 222,
+      "password": "pbkdf2_sha256$600000$7jyPXIpgzHEf5YvaML1x0W$sYtwzZBqXlittJZ3bkexDjTAF4NiZcwO5RdtbIv1o5w=",
+      "last_login": "2023-10-11T19:28:31.627Z",
+      "is_superuser": true,
+      "username": "administrator",
+      "first_name": "",
+      "last_name": "",
+      "email": "administrator@admin.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-10-11T19:28:20.561Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "fields": {
+      "id": 333,
+      "password": "pbkdf2_sha256$600000$LD1ZbW85jaqLTsu1phjnHW$eeSqEUQF9WqHVvPcBbFmcBmNNtnBOIEDZ38TTpk2ovo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "Martin Mapper",
+      "first_name": "Martin",
+      "last_name": "Mapper",
+      "email": "Martin@mail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-10-11T19:44:39Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "fields": {
+      "id": 444,
+      "password": "pbkdf2_sha256$600000$LD1ZbW85jaqLTsu1phjnHW$eeSqEUQF9WqHVvPcBbFmcBmNNtnBOIEDZ38TTpk2ovo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "Tom Tester",
+      "first_name": "Tom",
+      "last_name": "Tester",
+      "email": "Tom@mail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-10-11T19:44:39Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "points.userpoint",
+    "pk": 333,
+    "fields": {
+      "created": "2023-10-11T19:41:28.164Z",
+      "modified": "2023-10-11T19:43:30.036Z",
+      "user": 222,
+      "label_text": "Helsinki central railway station",
+      "position": "SRID=4326;POINT (24.94030214683831 60.1712000939996)"
+    }
+  },
+  {
+    "model": "points.userpoint",
+    "pk": 444,
+    "fields": {
+      "created": "2023-10-11T19:42:01.651Z",
+      "modified": "2023-10-11T19:45:43.028Z",
+      "user": 333,
+      "label_text": "Helsinki Cathedral",
+      "position": "SRID=4326;POINT (24.95077731787692 60.17048552960218)"
+    }
+  },
+  {
+    "model": "points.userpoint",
+    "pk": 555,
+    "fields": {
+      "created": "2023-10-11T19:42:30.803Z",
+      "modified": "2023-10-11T19:43:30.043Z",
+      "user": null,
+      "label_text": "Amusement park",
+      "position": "SRID=4326;POINT (24.93687071256883 60.18904722097928)"
+    }
+  }
+]

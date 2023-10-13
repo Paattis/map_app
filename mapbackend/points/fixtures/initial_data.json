@@ -292,7 +292,6 @@
 },
 {
     "model": "auth.user",
-    "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$600000$7jyPXIpgzHEf5YvaML1x0W$sYtwzZBqXlittJZ3bkexDjTAF4NiZcwO5RdtbIv1o5w=",
         "last_login": "2023-10-11T19:28:31.627Z",
@@ -310,7 +309,6 @@
 },
 {
     "model": "auth.user",
-    "pk": 3,
     "fields": {
         "password": "pbkdf2_sha256$600000$LD1ZbW85jaqLTsu1phjnHW$eeSqEUQF9WqHVvPcBbFmcBmNNtnBOIEDZ38TTpk2ovo=",
         "last_login": null,
@@ -319,6 +317,23 @@
         "first_name": "Matti",
         "last_name": "Meikäläinen",
         "email": "MattiM@mail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-10-11T19:44:39Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$LD1ZbW85jaqLTsu1phjnHW$eeSqEUQF9WqHVvPcBbFmcBmNNtnBOIEDZ38TTpk2ovo=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "TeuvoTestaaja",
+        "first_name": "Teuvo",
+        "last_name": "Testaaja",
+        "email": "TeuvoT@mail.com",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2023-10-11T19:44:39Z",
@@ -397,7 +412,7 @@
         "created": "2023-10-11T19:41:28.164Z",
         "modified": "2023-10-11T19:43:30.036Z",
         "user": 1,
-        "label_text": "Helsingin Päärautatieasema",
+        "label_text": "Helsinki main railway station",
         "position": "SRID=4326;POINT (24.94030214683831 60.1712000939996)"
     }
 },
@@ -408,7 +423,7 @@
         "created": "2023-10-11T19:42:01.651Z",
         "modified": "2023-10-11T19:45:43.028Z",
         "user": 3,
-        "label_text": "Helsingin tuomiokirkko",
+        "label_text": "Helsinki Cathedral",
         "position": "SRID=4326;POINT (24.95077731787692 60.17048552960218)"
     }
 },
@@ -419,7 +434,7 @@
         "created": "2023-10-11T19:42:30.803Z",
         "modified": "2023-10-11T19:43:30.043Z",
         "user": null,
-        "label_text": "Linnanmäki",
+        "label_text": "Amusement park",
         "position": "SRID=4326;POINT (24.93687071256883 60.18904722097928)"
     }
 }
