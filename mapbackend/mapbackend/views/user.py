@@ -18,4 +18,5 @@ class UserViewSet(viewsets.ModelViewSet):
             return super().get_queryset()
 
         # return only the logged in user if the user isn't an admin
+        # mainly to discourage the harvesting of data through the API
         return super().get_queryset().filter(pk=self.request.user.id)
