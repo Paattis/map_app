@@ -10,9 +10,16 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY ./entrypoint.sh .
+RUN chmod +x /src/backend/entrypoint.sh
+
+
+# install dependencies for PostGIS
 RUN apt-get update
-#RUN apt-get install sudo
 RUN apt-get install binutils libproj-dev gdal-bin -y
 
-
 COPY . .
+
+ENTRYPOINT ["/src/backend/entrypoint.sh"]
+
+
