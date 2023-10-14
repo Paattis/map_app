@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
 WORKDIR /src/backend/
+RUN mkdir /src/backend/staticfiles
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
