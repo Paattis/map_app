@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 
 class UserPoint(TimeStampMixin):
+    """Model class that represents a geographical point on a map."""    
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     label_text = models.CharField(max_length=255)
     position = models.PointField(geography=True, default=Point(24.9384, 60.1699))

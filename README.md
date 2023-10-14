@@ -32,24 +32,24 @@ to have the application start in production mode.
 ## Documentation
 Documentation for the REST Api is available at the `/api/docs` endpoint
 
-### Backend 
+## Backend 
 The backend is built with Django 
 
-#### Tests
+### Tests
 The tests are located in the `tests/` directory of each app.
 
-##### Running tests
+### Running tests
 ```
 $ docker-compose exec backend python manage.py test
 ```
 
-#### Migrations
-##### Making new migrations
+### Migrations
+#### Making new migrations
 ```
 $ docker-compose exec backend python manage.py makemigrations
 ```
 
-##### Running migrations
+#### Running migrations
 ```
 $ docker-compose exec backend python manage.py migrate
 ```

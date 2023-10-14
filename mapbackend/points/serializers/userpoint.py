@@ -5,6 +5,7 @@ from mapbackend.serializers import UserSerializerNoEmail
 
 
 class UserPointSerializer(serializers.HyperlinkedModelSerializer):
+    """Simple model serializer for the UserPoint model."""    
     user = UserSerializerNoEmail(read_only=True)
 
     class Meta:

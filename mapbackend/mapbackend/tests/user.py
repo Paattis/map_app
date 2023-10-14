@@ -129,7 +129,6 @@ class UserTests(BaseTestCase):
         self.assertEqual(response.status_code, 204)
 
         # check that user actually got deleted in the database
-        print("usertodelete id", user_to_delete.id)
         self.assert_deleted(get_user_model(), user_to_delete.id)
 
     def test_user_can_delete_own_user(self):
