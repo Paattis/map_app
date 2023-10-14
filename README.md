@@ -16,18 +16,21 @@ Build and run the entire stack with
 $ docker-compose up -d --build
 ```
 
-Run the migrations
-```
-$ docker-compose exec backend python manage.py migrate
-```
-
 Create the first superuser by running the following command and following the on-screen instructions
 ```
 $ docker-compose exec backend python manage.py createsuperuser
 ```
 
+## Running in production mode
+First you need to create an `.env.prod` file and fill it up with the relevant settings. After that you can run
+```
+$ docker-compose -f docker-compose.prod.yml up -d --build
+```
+to have the application start in production mode.
+
+
 ## Documentation
-Documentation for the REST Api is available at the `/docs` endpoint
+Documentation for the REST Api is available at the `/api/docs` endpoint
 
 ### Backend 
 The backend is built with Django 
@@ -50,3 +53,4 @@ $ docker-compose exec backend python manage.py makemigrations
 ```
 $ docker-compose exec backend python manage.py migrate
 ```
+Migrations are also run when starting up the Django application.

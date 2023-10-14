@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./mapbackend
-    command: gunicorn mapbackend.wsgi:application --bind 0.0.0.0:8000
+    entrypoint: /src/backend/entrypoint.prod.sh
     volumes:
       - ./mapbackend:/src/backend/
       - static_volume:/src/backend/staticfiles
