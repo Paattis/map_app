@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./mapbackend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn mapbackend.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./mapbackend:/src/backend/
     ports:
@@ -18,7 +18,11 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
       interval: 2s
       timeout: 5s
       retries: 5
