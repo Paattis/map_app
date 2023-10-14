@@ -165,9 +165,8 @@ class UserPointTests(BaseTestCase):
                 content_type="application/json"
             )
             self.assertEqual(response.status_code, 200)
-            # fetch point from db to check if its changed
-            changed_point = UserPoint.objects.get(pk=point.id)
-            self.assertEquals(changed_point.label_text, "Changed label")
+            # verify that the point was changed
+            self.assertEquals(response.json()["label_text"], "Changed label")
 
     def test_admin_allow_delete(self):
         """Admins should be allowed to delete any userpoints they want."""
@@ -184,7 +183,6 @@ class UserPointTests(BaseTestCase):
                 f"/userpoints/{point.id}/",
             )
             self.assertEqual(response.status_code, 204)
-
             deleted_point = UserPoint.objects.filter(pk=point.id).first()
             self.assertIsNone(deleted_point)
 

@@ -13,3 +13,9 @@ class IsEditingOwnContent(permissions.BasePermission):
 
         return (obj.user == request.user) or (request.user.is_staff) or (request.user.is_superuser)
 
+
+class IsAdminOrUserItself(permissions.BasePermission):
+    """Allow users to access their own data. """
+
+    def has_object_permission(self, request, view, obj):
+        return (obj.pk == request.user.id) or (request.user.is_staff) or (request.user.is_superuser)
