@@ -64,7 +64,32 @@ class UserTests(BaseTestCase):
         self.assertEqual(response.json(), expected_data)
         pass
 
-    def test_admin_should_view_every_user(self):
+    def test_admin_should_update_all_data(self):
+        """Admins should be allowed to update any user's data"""
+        client = self.get_client(self.admin_user)
+
+        data = {"username": "changed_username"}
+
+        user_to_modify = get_user_model().objects.exclude(pk=self.admin_user.id).first()
+
+        expected_data = {
+            "id": self.user.id,
+            "username": data["username"],
+            "email": self.user.email
+        }
+
+        response = client.put(
+            self.detail_url(user_to_modify.id),
+            json.dumps(data),
+            content_type="application/json"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        # the data should have been changed
+        self.assertEqual(response.json(), expected_data)
+        pass
+
+    def test_admin_should_be_able_to_view_every_user(self):
         """Admin users should be allowed to list and retrieve all user data through the /users/ endpoint"""
         client = self.get_client(self.admin_user)
         response = client.get(self.list_url)
@@ -91,6 +116,96 @@ class UserTests(BaseTestCase):
 
         # verify that the correct user was fetched
         self.assertEqual(response.json(), expected_data)
+
+    def test_admin_can_delete_any_user(self):
+        """Admins should be able to delete any user"""
+        user_to_delete = get_user_model().objects.create(
+            username="deletable",
+            email="toBeDeleted@mail.com"
+        )
+
+        client = self.get_client(self.admin_user)
+        response = client.delete(self.detail_url(user_to_delete.id))
+
+        self.assertEqual(response.status_code, 204)
+
+        # check that user actually got deleted in the database
+        print("usertodelete id", user_to_delete.id)
+        self.assert_deleted(get_user_model(), user_to_delete.id)
+
+    def test_user_can_delete_own_user(self):
+        """Regular users should be able to delete their own user but not other users."""
+        user_to_delete = get_user_model().objects.create(
+            username="toBeDeleted",
+            email="toBeDeleted@mail.com"
+        )
+
+        should_not_be_deleted = get_user_model().objects.create(
+            username="ShouldNotBeDeleted",
+            email="ShouldNotBeDeleted@mail.com"
+        )
+
+        client = self.get_client(user_to_delete)
+        # shouldnt be able to delete an other user's data
+        response = client.delete(self.detail_url(should_not_be_deleted.id))
+        self.assertEqual(response.status_code, 404)
+        self.assert_exists(get_user_model(), should_not_be_deleted.id)
+
+        # should be able to delete their own data
+        response = client.delete(self.detail_url(user_to_delete.id))
+        self.assertEqual(response.status_code, 204)
+        self.assert_deleted(get_user_model(), user_to_delete.id)
+
+    def test_can_register_new_user_with_valid_data(self):
+        """User registration should work with valid data"""
+        client = self.get_client()
+        data = {
+            "username": "New user",
+            "email": "newuser@mail.com",
+            "password": "Tops3cr3t123",
+            "password2": "Tops3cr3t123"
+        }
+
+        response = client.post(
+            reverse("register_user"),
+            json.dumps(data),
+            content_type="application/json"
+        )
+
+        self.assertEqual(response.status_code, 201)
+        new_user = get_user_model().objects.last()
+        expected_data = {
+            "username": new_user.username,
+            "email": new_user.email,
+            "id": new_user.id,
+        }
+
+        self.assertEqual(response.json(), expected_data)
+
+    def test_cannot_register_new_user_with_invalid_data(self):
+        """User registration should not work with invalid data"""
+        client = self.get_client()
+
+        # invalid user data
+        # autopep8: off
+        test_data = [
+            { "username": "BadEmail", "email": "newuser", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
+            { "username": "DiffPasswords", "email": "newuser@mail.com", "password": "Tops3cr3t12", "password2": "D1ff3rentp4ssword" },
+            { "username": "", "email": "BlankUserName@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
+            { "email": "NoUserName@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
+            { "username": "Martin Mapper", "email": "email@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" }, 
+            { "username": "Martin Mailer", "email": "Martin@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
+        ]
+        # autopep8: on
+
+        for data in test_data:
+            response = client.post(
+                reverse("register_user"),
+                json.dumps(data),
+                content_type="application/json"
+            )
+
+            self.assertEqual(response.status_code, 400)
 
     def test_can_get_jwt_token(self):
         """The `/token/` endpoint should return the appropriate JWT tokens when 

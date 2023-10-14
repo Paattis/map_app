@@ -40,6 +40,7 @@ app_name = "api"
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include((router.urls, "api"))),
+    path('register/', user.RegisterView.as_view(), name="register_user"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

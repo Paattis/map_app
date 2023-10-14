@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class BaseTestCase(LiveServerTestCase):
@@ -17,6 +18,14 @@ class BaseTestCase(LiveServerTestCase):
         self.admin_user = get_user_model().objects.get(pk=222)
         self.list_url = reverse(self.list_view_name)
         pass
+
+    def assert_exists(self, model: models.Model, pk: int) -> bool:
+        """Shorthand for asserting that an object with a given pk exists in a table."""
+        return self.assertIsNotNone(model.objects.filter(pk=pk).first())
+
+    def assert_deleted(self, model: models.Model, pk: int) -> bool:
+        """Shorthand for asserting that an object was deleted from the database."""
+        return self.assertIsNone(model.objects.filter(pk=pk).first())
 
     def detail_url(self, pk: int) -> str:
         """Convenience Wrapper for django.urls.reverse to save space in source code. 
