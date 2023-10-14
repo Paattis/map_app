@@ -2,10 +2,11 @@ from points.models import UserPoint
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 from mapbackend.serializers import UserSerializerNoEmail
+from rest_framework_gis.fields import GeometryField
 
 
-class UserPointSerializer(serializers.HyperlinkedModelSerializer):
-    """Simple model serializer for the UserPoint model."""    
+class UserPointSerializer(serializers.ModelSerializer):
+    """Simple model serializer for the UserPoint model."""
     user = UserSerializerNoEmail(read_only=True)
 
     class Meta:
