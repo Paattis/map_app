@@ -32,13 +32,21 @@ Documentation for the REST Api is available at the `/docs` endpoint
 ### Backend 
 The backend is built with Django 
 
+#### Tests
+The tests are located in the `tests/` directory of each app.
+
+##### Running tests
+```
+$ docker-compose exec backend python manage.py test
+```
+
 #### Migrations
-To make new migrations
+##### Making new migrations
 ```
 $ docker-compose exec backend python manage.py makemigrations
 ```
 
-To run migrations
+##### Running migrations
 ```
 $ docker-compose exec backend python manage.py migrate
 ```
