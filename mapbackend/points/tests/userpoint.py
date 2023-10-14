@@ -98,7 +98,7 @@ class UserPointTests(BaseTestCase):
         point_to_delete = UserPoint.objects.create(
             label_text="Foo", user=self.user)
         point_id = point_to_delete.id
-        response = client.delete(f"/userpoints/{point_id}/")
+        response = client.delete(self.detail_url(point_id))
 
         # server should tell us that the delete was successful
         self.assertEqual(response.status_code, 204)
@@ -119,7 +119,7 @@ class UserPointTests(BaseTestCase):
         }
 
         response = client.put(
-            f"/userpoints/{point.id}/",
+            self.detail_url(point.id),
             json.dumps(data),
             content_type="application/json"
         )
@@ -137,7 +137,7 @@ class UserPointTests(BaseTestCase):
             label_text="Foo", user=self.admin_user)
 
         response = client.delete(
-            f"/userpoints/{point.id}/",
+            self.detail_url(point.id),
         )
 
         self.assertEqual(response.status_code, 403)
@@ -160,7 +160,7 @@ class UserPointTests(BaseTestCase):
 
         for point in points:
             response = client.put(
-                f"/userpoints/{point.id}/",
+                self.detail_url(point.id),
                 json.dumps(data),
                 content_type="application/json"
             )
@@ -180,7 +180,7 @@ class UserPointTests(BaseTestCase):
 
         for point in points:
             response = client.delete(
-                f"/userpoints/{point.id}/",
+                self.detail_url(point.id),
             )
             self.assertEqual(response.status_code, 204)
             deleted_point = UserPoint.objects.filter(pk=point.id).first()
@@ -199,7 +199,7 @@ class UserPointTests(BaseTestCase):
             "label_text": "Changed label"
         }
         response = client.put(
-            f"/userpoints/{point.id}/",
+            self.detail_url(point.id),
             json.dumps(data),
             content_type="application/json"
         )
@@ -215,7 +215,7 @@ class UserPointTests(BaseTestCase):
         client = self.get_client()
 
         response = client.delete(
-            f"/userpoints/{point.id}/",
+            self.detail_url(point.id),
         )
 
         self.assertEqual(response.status_code, 401)
