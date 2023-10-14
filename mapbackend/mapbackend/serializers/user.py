@@ -6,3 +6,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
+
+
+class UserSerializerNoEmail(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']

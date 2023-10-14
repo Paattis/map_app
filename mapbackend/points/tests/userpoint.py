@@ -32,7 +32,7 @@ class UserPointTests(BaseTestCase):
             "pk": 333,
             "label_text": "Helsinki central railway station",
             "position": {"coordinates": [24.94030214683831, 60.1712000939996], "type": "Point"},
-            "user": {"email": "administrator@admin.com", "id": 222, "username": "administrator"}
+            "user": {"id": 222, "username": "administrator"}
         }
 
         self.assertEqual(response.status_code, 200)
@@ -56,7 +56,7 @@ class UserPointTests(BaseTestCase):
 
         expected_data = {
             "pk": UserPoint.objects.last().pk,
-            "user": {"email": "Martin@mail.com", "id": 333, "username": "Martin Mapper"},
+            "user": {"id": 333, "username": "Martin Mapper"},
             **data
         }
 
@@ -73,7 +73,7 @@ class UserPointTests(BaseTestCase):
 
         expected_data = {
             "pk": 444,
-            "user": {"email": "Martin@mail.com", "id": 333, "username": "Martin Mapper"},
+            "user": {"id": 333, "username": "Martin Mapper"},
             "label_text": "Changed label",
             "position": {
                 "coordinates": [24.95077731787692, 60.17048552960218], "type": "Point"
