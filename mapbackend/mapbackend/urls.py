@@ -34,11 +34,11 @@ router.register(r'users', user.UserViewSet, basename="user")
 router.register(r'userpoints', userpoint.UserPointViewSet,
                 basename="userpoint")
 
-app_name = "api"
+# app_name = "api"
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
-urlpatterns = [
+paths = [
     path('', include((router.urls, "api"))),
     path('register/', user.RegisterView.as_view(), name="register_user"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -58,3 +58,5 @@ urlpatterns = [
         extra_context={'schema_url': 'openapi-schema'},
     ), name='redoc'),
 ]
+
+urlpatterns = [path("api/", include(paths))]
