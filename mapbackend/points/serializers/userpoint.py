@@ -9,7 +9,7 @@ class UserPointSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = UserPoint
-        fields = ['id', 'label_text', 'position', 'user']
+        fields = ["id", "label_text", "position", "user"]
 
     def create(self, validated_data):
         user = self.context["request"].user

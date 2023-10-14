@@ -6,24 +6,37 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='UserPoint',
+            name="UserPoint",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('label_text', models.CharField(max_length=255)),
-                ('position', django.contrib.gis.db.models.fields.PointField(default=django.contrib.gis.geos.point.Point(24.9384, 60.1699), geography=True, srid=4326)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                ("label_text", models.CharField(max_length=255)),
+                (
+                    "position",
+                    django.contrib.gis.db.models.fields.PointField(
+                        default=django.contrib.gis.geos.point.Point(24.9384, 60.1699),
+                        geography=True,
+                        srid=4326,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

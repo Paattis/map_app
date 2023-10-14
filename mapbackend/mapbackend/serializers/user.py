@@ -15,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserSerializerNoEmail(serializers.ModelSerializer):
     """User serializer with less information available to discourage data scraping.
     Used for displaying the user's id and name in the Userpoints they've created."""
+
     class Meta:
         model = get_user_model()
         fields = ["id", "username"]
@@ -22,18 +23,20 @@ class UserSerializerNoEmail(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """Serializer for user registration."""
+
     username = serializers.CharField(
         required=True,
-        validators=[UniqueValidator(queryset=get_user_model().objects.all())]
+        validators=[UniqueValidator(queryset=get_user_model().objects.all())],
     )
 
     email = serializers.EmailField(
         required=True,
-        validators=[UniqueValidator(queryset=get_user_model().objects.all())]
+        validators=[UniqueValidator(queryset=get_user_model().objects.all())],
     )
 
     password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password])
+        write_only=True, required=True, validators=[validate_password]
+    )
     password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -48,8 +51,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         user = self.Meta.model.objects.create(
-            username=validated_data["username"],
-            email=validated_data["email"]
+            username=validated_data["username"], email=validated_data["email"]
         )
         user.set_password(validated_data["password"])
         user.save()

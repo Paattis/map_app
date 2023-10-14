@@ -6,25 +6,20 @@ import os
 from sys import path
 from django.core.management import call_command
 
-fixture_dir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '../fixtures'))
+fixture_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../fixtures"))
 
 
 def load_fixtures(apps, schema_editor):
     # only load initial data when in development mode
     if settings.DEBUG:
-        call_command("loaddata", os.path.join(
-            fixture_dir, "initial_data.json"))
+        call_command("loaddata", os.path.join(fixture_dir, "initial_data.json"))
     pass
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sessions', '0001_initial'),
-        ('points', '0002_userpoint_user'),
+        ("sessions", "0001_initial"),
+        ("points", "0002_userpoint_user"),
     ]
 
-    operations = [
-        migrations.RunPython(load_fixtures, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(load_fixtures, migrations.RunPython.noop)]

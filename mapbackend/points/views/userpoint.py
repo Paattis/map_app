@@ -5,10 +5,12 @@ from points.serializers import UserPointSerializer
 from points.models import UserPoint
 from mapbackend.permissions import IsEditingOwnContent
 
+
 class UserPointViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = UserPoint.objects.all().order_by('-created')
+
+    queryset = UserPoint.objects.all().order_by("-created")
     serializer_class = UserPointSerializer
     permission_classes = [IsEditingOwnContent]

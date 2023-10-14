@@ -30,33 +30,40 @@ from rest_framework_simplejwt.views import (
 
 
 router = routers.DefaultRouter()
-router.register(r'users', user.UserViewSet, basename="user")
-router.register(r'userpoints', userpoint.UserPointViewSet,
-                basename="userpoint")
+router.register(r"users", user.UserViewSet, basename="user")
+router.register(r"userpoints", userpoint.UserPointViewSet, basename="userpoint")
 
 # app_name = "api"
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 paths = [
-    path('', include((router.urls, "api"))),
-    path('register/', user.RegisterView.as_view(), name="register_user"),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('admin/', admin.site.urls),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('openapi/', get_schema_view(
-        title="Your Project",
-        description="API for all things …",
-        version="1.0.0",
-        public=True,
-        permission_classes=[permissions.IsAdminUser],
-    ), name='openapi-schema'),
-    path('docs/', TemplateView.as_view(
-        template_name='redoc.html',
-        extra_context={'schema_url': 'openapi-schema'},
-    ), name='redoc'),
+    path("", include((router.urls, "api"))),
+    path("register/", user.RegisterView.as_view(), name="register_user"),
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("admin/", admin.site.urls),
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path(
+        "openapi/",
+        get_schema_view(
+            title="Your Project",
+            description="API for all things …",
+            version="1.0.0",
+            public=True,
+            permission_classes=[permissions.IsAdminUser],
+        ),
+        name="openapi-schema",
+    ),
+    path(
+        "docs/",
+        TemplateView.as_view(
+            template_name="redoc.html",
+            extra_context={"schema_url": "openapi-schema"},
+        ),
+        name="redoc",
+    ),
 ]
 
 urlpatterns = [path("api/", include(paths))]

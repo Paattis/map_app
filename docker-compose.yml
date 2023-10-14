@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./mapbackend
-    entrypoint: /src/backend/entrypoint.sh
+    command: sh /src/backend/entrypoint.sh
     volumes:
       - ./mapbackend:/src/backend/
       - static_volume:/src/backend/staticfiles
@@ -22,9 +22,9 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h db"
         ]
-      interval: 2s
+      interval: 5s
       timeout: 5s
       retries: 5
 

@@ -8,8 +8,8 @@ from rest_framework.test import APIClient
 
 
 class UserTests(BaseTestCase):
-    """Test cases concerning everything relating to Users (tokens, logins, user creation etc.)
-    """
+    """Test cases concerning everything relating to Users (tokens, logins, user creation etc.)"""
+
     list_view_name = "api:user-list"
     detail_view_name = "api:user-detail"
 
@@ -24,7 +24,7 @@ class UserTests(BaseTestCase):
             {
                 "id": self.user.id,
                 "username": self.user.username,
-                "email": self.user.email
+                "email": self.user.email,
             }
         ]
         # list operation should only return the currently logged in user
@@ -50,13 +50,13 @@ class UserTests(BaseTestCase):
         expected_data = {
             "id": self.user.id,
             "username": data["username"],
-            "email": self.user.email
+            "email": self.user.email,
         }
 
         response = client.put(
             self.detail_url(self.user.id),
             json.dumps(data),
-            content_type="application/json"
+            content_type="application/json",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -75,13 +75,13 @@ class UserTests(BaseTestCase):
         expected_data = {
             "id": self.user.id,
             "username": data["username"],
-            "email": self.user.email
+            "email": self.user.email,
         }
 
         response = client.put(
             self.detail_url(user_to_modify.id),
             json.dumps(data),
-            content_type="application/json"
+            content_type="application/json",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -111,7 +111,7 @@ class UserTests(BaseTestCase):
         expected_data = {
             "username": other_user.username,
             "email": other_user.email,
-            "id": other_user.id
+            "id": other_user.id,
         }
 
         # verify that the correct user was fetched
@@ -120,8 +120,7 @@ class UserTests(BaseTestCase):
     def test_admin_can_delete_any_user(self):
         """Admins should be able to delete any user"""
         user_to_delete = get_user_model().objects.create(
-            username="deletable",
-            email="toBeDeleted@mail.com"
+            username="deletable", email="toBeDeleted@mail.com"
         )
 
         client = self.get_client(self.admin_user)
@@ -136,13 +135,11 @@ class UserTests(BaseTestCase):
     def test_user_can_delete_own_user(self):
         """Regular users should be able to delete their own user but not other users."""
         user_to_delete = get_user_model().objects.create(
-            username="toBeDeleted",
-            email="toBeDeleted@mail.com"
+            username="toBeDeleted", email="toBeDeleted@mail.com"
         )
 
         should_not_be_deleted = get_user_model().objects.create(
-            username="ShouldNotBeDeleted",
-            email="ShouldNotBeDeleted@mail.com"
+            username="ShouldNotBeDeleted", email="ShouldNotBeDeleted@mail.com"
         )
 
         client = self.get_client(user_to_delete)
@@ -163,13 +160,11 @@ class UserTests(BaseTestCase):
             "username": "New user",
             "email": "newuser@mail.com",
             "password": "Tops3cr3t123",
-            "password2": "Tops3cr3t123"
+            "password2": "Tops3cr3t123",
         }
 
         response = client.post(
-            reverse("register_user"),
-            json.dumps(data),
-            content_type="application/json"
+            reverse("register_user"), json.dumps(data), content_type="application/json"
         )
 
         self.assertEqual(response.status_code, 201)
@@ -189,12 +184,41 @@ class UserTests(BaseTestCase):
         # invalid user data
         # autopep8: off
         test_data = [
-            { "username": "BadEmail", "email": "newuser", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
-            { "username": "DiffPasswords", "email": "newuser@mail.com", "password": "Tops3cr3t12", "password2": "D1ff3rentp4ssword" },
-            { "username": "", "email": "BlankUserName@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
-            { "email": "NoUserName@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
-            { "username": "Martin Mapper", "email": "email@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" }, 
-            { "username": "Martin Mailer", "email": "Martin@mail.com", "password": "Tops3cr3t123", "password2": "Tops3cr3t123" },
+            {
+                "username": "BadEmail",
+                "email": "newuser",
+                "password": "Tops3cr3t123",
+                "password2": "Tops3cr3t123",
+            },
+            {
+                "username": "DiffPasswords",
+                "email": "newuser@mail.com",
+                "password": "Tops3cr3t12",
+                "password2": "D1ff3rentp4ssword",
+            },
+            {
+                "username": "",
+                "email": "BlankUserName@mail.com",
+                "password": "Tops3cr3t123",
+                "password2": "Tops3cr3t123",
+            },
+            {
+                "email": "NoUserName@mail.com",
+                "password": "Tops3cr3t123",
+                "password2": "Tops3cr3t123",
+            },
+            {
+                "username": "Martin Mapper",
+                "email": "email@mail.com",
+                "password": "Tops3cr3t123",
+                "password2": "Tops3cr3t123",
+            },
+            {
+                "username": "Martin Mailer",
+                "email": "Martin@mail.com",
+                "password": "Tops3cr3t123",
+                "password2": "Tops3cr3t123",
+            },
         ]
         # autopep8: on
 
@@ -202,18 +226,21 @@ class UserTests(BaseTestCase):
             response = client.post(
                 reverse("register_user"),
                 json.dumps(data),
-                content_type="application/json"
+                content_type="application/json",
             )
 
             self.assertEqual(response.status_code, 400)
 
     def test_can_get_jwt_token(self):
-        """The `/token/` endpoint should return the appropriate JWT tokens when 
+        """The `/token/` endpoint should return the appropriate JWT tokens when
         given the correct user credentials"""
         client = self.get_client()
         data = {"username": "Martin Mapper", "password": "password"}
-        response = client.post(reverse("token_obtain_pair"), json.dumps(data),
-                               content_type="application/json")
+        response = client.post(
+            reverse("token_obtain_pair"),
+            json.dumps(data),
+            content_type="application/json",
+        )
 
         # get access and refresh tokens, assert them
         self.assertEqual(response.status_code, 200)
@@ -228,6 +255,6 @@ class UserTests(BaseTestCase):
             response = client.post(
                 reverse("token_verify"),
                 json.dumps({"token": token}),
-                content_type="application/json"
+                content_type="application/json",
             )
             self.assertEqual(response.status_code, 200)

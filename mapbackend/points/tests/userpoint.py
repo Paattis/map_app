@@ -9,6 +9,7 @@ from points.models import UserPoint
 
 class UserPointTests(BaseTestCase):
     """Tests concerning the API `/userpoints/` endpoint."""
+
     list_view_name = "api:userpoint-list"
     detail_view_name = "api:userpoint-detail"
     # reverse the url in case they're changed in the url config
@@ -31,8 +32,11 @@ class UserPointTests(BaseTestCase):
         expected_data = {
             "id": 333,
             "label_text": "Helsinki central railway station",
-            "position": {"coordinates": [24.94030214683831, 60.1712000939996], "type": "Point"},
-            "user": {"id": 222, "username": "administrator"}
+            "position": {
+                "coordinates": [24.94030214683831, 60.1712000939996],
+                "type": "Point",
+            },
+            "user": {"id": 222, "username": "administrator"},
         }
 
         self.assertEqual(response.status_code, 200)
@@ -46,18 +50,20 @@ class UserPointTests(BaseTestCase):
         data = {
             "label_text": "Point label text",
             "position": {
-                "coordinates": [24.95077731787692, 60.17048552960218], "type": "Point"
-            }
+                "coordinates": [24.95077731787692, 60.17048552960218],
+                "type": "Point",
+            },
         }
 
         response = client.post(
-            self.list_url, json.dumps(data), content_type="application/json")
+            self.list_url, json.dumps(data), content_type="application/json"
+        )
         self.assertEqual(response.status_code, 201)
 
         expected_data = {
             "id": UserPoint.objects.last().id,
             "user": {"id": 333, "username": "Martin Mapper"},
-            **data
+            **data,
         }
 
         self.assertEqual(response.json(), expected_data)
@@ -67,23 +73,20 @@ class UserPointTests(BaseTestCase):
         # fetch JWT token
         client = self.get_client(self.user)
 
-        data = {
-            "label_text": "Changed label"
-        }
+        data = {"label_text": "Changed label"}
 
         expected_data = {
             "id": 444,
             "user": {"id": 333, "username": "Martin Mapper"},
             "label_text": "Changed label",
             "position": {
-                "coordinates": [24.95077731787692, 60.17048552960218], "type": "Point"
-            }
+                "coordinates": [24.95077731787692, 60.17048552960218],
+                "type": "Point",
+            },
         }
 
         response = client.put(
-            self.detail_url(444),
-            json.dumps(data),
-            content_type="application/json"
+            self.detail_url(444), json.dumps(data), content_type="application/json"
         )
 
         self.assertEqual(response.status_code, 200)
@@ -95,8 +98,7 @@ class UserPointTests(BaseTestCase):
         client = self.get_client(self.user)
 
         # create new point for test
-        point_to_delete = UserPoint.objects.create(
-            label_text="Foo", user=self.user)
+        point_to_delete = UserPoint.objects.create(label_text="Foo", user=self.user)
         point_id = point_to_delete.id
         response = client.delete(self.detail_url(point_id))
 
@@ -111,17 +113,12 @@ class UserPointTests(BaseTestCase):
         """Users shouldn't be allowed to update userpoints that don't belong to them."""
         client = self.get_client(self.user)
 
-        point = UserPoint.objects.create(
-            label_text="Foo", user=self.admin_user)
+        point = UserPoint.objects.create(label_text="Foo", user=self.admin_user)
 
-        data = {
-            "label_text": "Changed label"
-        }
+        data = {"label_text": "Changed label"}
 
         response = client.put(
-            self.detail_url(point.id),
-            json.dumps(data),
-            content_type="application/json"
+            self.detail_url(point.id), json.dumps(data), content_type="application/json"
         )
 
         self.assertEqual(response.status_code, 403)
@@ -133,8 +130,7 @@ class UserPointTests(BaseTestCase):
         """Users shouldn't be allowed to delete userpoints that don't belong to them."""
         client = self.get_client(self.user)
 
-        point = UserPoint.objects.create(
-            label_text="Foo", user=self.admin_user)
+        point = UserPoint.objects.create(label_text="Foo", user=self.admin_user)
 
         response = client.delete(
             self.detail_url(point.id),
@@ -151,18 +147,16 @@ class UserPointTests(BaseTestCase):
         points = [
             UserPoint.objects.create(label_text="Foo", user=self.user),
             UserPoint.objects.create(label_text="Foo", user=self.admin_user),
-            UserPoint.objects.create(label_text="Foo", user=None)
+            UserPoint.objects.create(label_text="Foo", user=None),
         ]
 
-        data = {
-            "label_text": "Changed label"
-        }
+        data = {"label_text": "Changed label"}
 
         for point in points:
             response = client.put(
                 self.detail_url(point.id),
                 json.dumps(data),
-                content_type="application/json"
+                content_type="application/json",
             )
             self.assertEqual(response.status_code, 200)
             # verify that the point was changed
@@ -175,7 +169,7 @@ class UserPointTests(BaseTestCase):
         points = [
             UserPoint.objects.create(label_text="Foo", user=self.user),
             UserPoint.objects.create(label_text="Foo", user=self.admin_user),
-            UserPoint.objects.create(label_text="Foo", user=None)
+            UserPoint.objects.create(label_text="Foo", user=None),
         ]
 
         for point in points:
@@ -189,19 +183,14 @@ class UserPointTests(BaseTestCase):
     def test_anonymous_not_allow_update(self):
         """Shouldn't be allowed to update userpoints without login."""
 
-        point = UserPoint.objects.create(
-            label_text="Foo", user=self.admin_user)
+        point = UserPoint.objects.create(label_text="Foo", user=self.admin_user)
 
         # unauthorized anonymous user
         client = self.get_client()
 
-        data = {
-            "label_text": "Changed label"
-        }
+        data = {"label_text": "Changed label"}
         response = client.put(
-            self.detail_url(point.id),
-            json.dumps(data),
-            content_type="application/json"
+            self.detail_url(point.id), json.dumps(data), content_type="application/json"
         )
 
         self.assertEqual(response.status_code, 401)
@@ -210,8 +199,7 @@ class UserPointTests(BaseTestCase):
         """Shouldn't be allowed to delete userpoints without login."""
 
         # unauthorized anonymous user
-        point = UserPoint.objects.create(
-            label_text="Foo", user=self.admin_user)
+        point = UserPoint.objects.create(label_text="Foo", user=self.admin_user)
         client = self.get_client()
 
         response = client.delete(

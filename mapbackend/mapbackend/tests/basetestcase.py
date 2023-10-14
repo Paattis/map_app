@@ -9,6 +9,7 @@ from django.db import models
 
 class BaseTestCase(LiveServerTestCase):
     """Base class for all the test cases. Handles JWT access tokens and contains other convenience methods."""
+
     fixtures = ["../fixtures/test_data.json"]
     list_view_name: str
     detail_view_name: str
@@ -28,7 +29,7 @@ class BaseTestCase(LiveServerTestCase):
         return self.assertIsNone(model.objects.filter(pk=pk).first())
 
     def detail_url(self, pk: int) -> str:
-        """Convenience Wrapper for django.urls.reverse to save space in source code. 
+        """Convenience Wrapper for django.urls.reverse to save space in source code.
             Returns the detail url for a singular item (e.g. /users/123/).
         Args:
             pk (int): the primary key of the object you want a link to
@@ -36,8 +37,7 @@ class BaseTestCase(LiveServerTestCase):
         Returns:
             str: the url
         """
-        return reverse(
-            self.detail_view_name, kwargs={"pk": pk})
+        return reverse(self.detail_view_name, kwargs={"pk": pk})
 
     def get_client(self, user: User = None) -> APIClient:
         """Gets a new client object. Sets up JWT auth if a User is supplied.
