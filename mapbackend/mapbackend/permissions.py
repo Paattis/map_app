@@ -10,6 +10,6 @@ class IsEditingOwnContent(permissions.BasePermission):
         # allow read operations
         if request.method in permissions.SAFE_METHODS:
             return True
-        print("user", obj.user, "req user", request.user)
+
         return (obj.user == request.user) or (request.user.is_staff) or (request.user.is_superuser)
 
