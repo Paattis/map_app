@@ -30,12 +30,15 @@ from rest_framework_simplejwt.views import (
 
 router = routers.DefaultRouter()
 router.register(r'users', user.UserViewSet)
-router.register(r'userpoints', userpoint.UserPointViewSet)
+router.register(r'userpoints', userpoint.UserPointViewSet,
+                basename="userpoint")
+
+app_name = "map_app"
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include((router.urls, "userpoint"), namespace="api")),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -49,6 +52,6 @@ urlpatterns = [
     ), name='openapi-schema'),
     path('docs/', TemplateView.as_view(
         template_name='redoc.html',
-        extra_context={'schema_url':'openapi-schema'},
+        extra_context={'schema_url': 'openapi-schema'},
     ), name='redoc'),
 ]

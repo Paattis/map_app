@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.urls import reverse
 
 import json
 from mapbackend.tests import BaseTestCase
@@ -7,18 +8,24 @@ from points.models import UserPoint
 
 
 class UserPointTests(BaseTestCase):
-    fixtures = ["../fixtures/test_data.json"]
+    """Tests concerning the API `/userpoints/` endpoint."""
+    list_view_name = "api:userpoint-list"
+    detail_view_name = "api:userpoint-detail"
+    # reverse the url in case they're changed in the url config
+
+    def setUp(self):
+        super(UserPointTests, self).setUp()
 
     def test_get_userpoints(self):
         """Check that getting userpoints works"""
         client = self.get_client(self.user)
-        response = client.get("/userpoints/")
+        response = client.get(self.list_url)
         self.assertEqual(response.status_code, 200)
 
     def test_get_single_userpoint(self):
         """Check that getting a single userpoint works"""
         client = self.get_client(self.user)
-        response = client.get("/userpoints/333/")
+        response = client.get(self.detail_url(333))
         response_data = response.json()
 
         expected_data = {
@@ -44,7 +51,7 @@ class UserPointTests(BaseTestCase):
         }
 
         response = client.post(
-            "/userpoints/", json.dumps(data), content_type="application/json")
+            self.list_url, json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 201)
 
         expected_data = {
@@ -74,13 +81,13 @@ class UserPointTests(BaseTestCase):
         }
 
         response = client.put(
-            "/userpoints/444/",
+            self.detail_url(444),
             json.dumps(data),
             content_type="application/json"
         )
 
         self.assertEqual(response.status_code, 200)
-        response = client.get("/userpoints/444/")
+        response = client.get(self.detail_url(444))
         self.assertEqual(response.json(), expected_data)
 
     def test_user_delete_userpoint(self):
