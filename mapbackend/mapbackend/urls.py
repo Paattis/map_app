@@ -48,8 +48,8 @@ paths = [
     path(
         "openapi/",
         get_schema_view(
-            title="Your Project",
-            description="API for all things …",
+            title="Map API",
+            description="Simple map API",
             version="1.0.0",
             public=True,
             permission_classes=[permissions.IsAdminUser],

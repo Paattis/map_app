@@ -8,7 +8,21 @@ from rest_framework import generics
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows users to be viewed or edited. 
+    The texts below are to describe each of the HTTP methods 
+    for the automatically generated documentation.
+    (https://stackoverflow.com/a/58435631)
+
+    list: Lists users. If not logged in as a staff 
+    or a superuser this only returns the currently logged in user.
+
+    retrieve: Gets the user with the given id. Can only use this to access the currently logged in user 
+    if not staff or a superuser.
+
+    update: Updates the user with the given id. Can only use this to access the currently logged in user 
+    if not staff or a superuser.
+    destroy: Deletes the user with the given id. Can only use this to delete the currently logged in user 
+    if not staff or a superuser.
     """
 
     queryset = get_user_model().objects.all().order_by("-date_joined")
@@ -26,7 +40,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class RegisterView(generics.CreateAPIView):
-    """Endpoint for the registration of a new user"""
+    """Endpoint for the registering a new user. 
+    `username` and `email` must be unique."""
 
     http_method_names = ["post"]
 
