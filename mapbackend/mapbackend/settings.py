@@ -29,6 +29,10 @@ DEBUG = bool(int(os.environ.get("DJANGO_DEBUG", default=0)))
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(" ")
 
+CORS_ALLOWED_ORIGINS = os.environ.get("FRONTEND_HOSTS").split(" ")
+print(CORS_ALLOWED_ORIGINS)
+
+
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "points",
     "rest_framework_gis",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "mapbackend.urls"
