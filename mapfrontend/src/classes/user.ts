@@ -3,3 +3,8 @@ export type User = {
   username: string;
   id: number;
 };
+
+export type UserNoEmail = {
+  username: string;
+  id: number;
+};

@@ -1,12 +1,20 @@
+import { TokenPair } from "../classes/tokenPair";
 import values from "../classes/values";
 
 class AuthService {
   // TODO: get API URL from .env
   API_URL = values.API_URL;
-  async login(username: string, password: string) {
-    console.log(process.env);
+
+  /**
+   * Fetches access tokens in exchange for the correct login credentials.
+   * @async
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<TokenPair>}
+   */
+  async login(username: string, password: string): Promise<TokenPair> {
     let url = `${this.API_URL}/token/`;
-    console.log("Url", url);
+
     return fetch(url, {
       method: "POST",
       headers: {
@@ -22,12 +30,23 @@ class AuthService {
         localStorage.setItem("token", JSON.stringify(data));
         return data;
       });
-    //.catch((err) => console.log("err", err));
   }
 
   logOut() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+  }
+
+  /**
+   * Gets the current JWT `TokenPair` from localStorage.
+   * @returns {(TokenPair | null)}
+   */
+  getTokens(): TokenPair | null {
+    if (localStorage.getItem("token")) {
+      return JSON.parse(localStorage.getItem("token") || "{}") as TokenPair;
+    }
+
+    return null;
   }
 }
 

@@ -1,71 +1,44 @@
-import Map from "ol/Map";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
-import { useGeographic } from "ol/proj";
-// Import - Import for Controls
-import ScaleLineControl from "ol/control/ScaleLine";
-import FullScreenControl from "ol/control/FullScreen";
-import {
-  Zoom,
-  Attribution,
-  Rotate,
-  MousePosition,
-  ZoomSlider,
-} from "ol/control";
+import React, { useState } from "react";
+import { UserPoint } from "../classes/userpoint";
 
-// Import - Import for function that creates cordinates
-import { createStringXY } from "ol/coordinate";
-import { View } from "ol";
-import React from "react";
+import { fromLonLat, toLonLat } from "ol/proj";
+import { Point } from "ol/geom";
+import "ol/ol.css";
 
-export interface IMapViewProps {}
+import { RMap, ROSM, RLayerVector, RFeature, ROverlay, RStyle } from "rlayers";
+//import locationIcon from "./svg/location.svg";
+
+export interface IMapViewProps {
+  userPoints: Array<UserPoint>;
+}
 
 export default function MapView(props: IMapViewProps) {
-  const rotateControl = new Rotate();
-  const zoomSliderControl = new ZoomSlider();
-  const scaleLineControl = new ScaleLineControl();
-  const fullScreenControl = new FullScreenControl();
-  const attrControl = new Attribution();
-  const zoomControl = new Zoom({});
-  const mousePositionControl = new MousePosition({
-    coordinateFormat: createStringXY(4),
-    projection: "EPSG:4326",
-    className: "custom-mouse-position",
-  });
-
-  // State inizialization - State for Map ref and Map
-  const mapTargetElement = React.useRef<HTMLDivElement>(null);
-  const [map, setMap] = React.useState<Map | undefined>();
-  useGeographic();
-  React.useEffect(() => {
-    const map = new Map({
-      layers: [new TileLayer({ source: new OSM() })],
-      controls: [],
-      view: new View({
-        center: [24.936870712, 60.18904722],
-        zoom: 7,
-        minZoom: 0,
-        maxZoom: 28,
-      }),
-    });
-    map.setTarget(mapTargetElement.current || "");
-    setMap(map);
-    map.getView().setCenter([24.936870712, 60.18904722]);
-
-    return () => map.setTarget("");
-  }, []);
+  const [newUserPoint, setNewUserPoint] = useState<UserPoint>();
 
   return (
-    <>
-      <div
-        ref={mapTargetElement}
-        className="map"
-        style={{
-          width: "100%",
-          height: "400px",
-          position: "relative",
-        }}
-      ></div>
-    </>
+    <RMap
+      className="example-map"
+      width={"100%"}
+      height={"500px"}
+      initial={{
+        center: fromLonLat([24.94030214683831, 60.1712000939996]),
+        zoom: 10,
+      }}
+      onClick={(e) => {
+        const coords = e.map.getCoordinateFromPixel(e.pixel);
+      }}
+    >
+      <ROSM />
+      <RLayerVector zIndex={10}>
+        <RStyle.RStyle></RStyle.RStyle>
+        {props.userPoints.map((point) => (
+          <RFeature
+            geometry={new Point(fromLonLat(point.position.coordinates))}
+          >
+            <ROverlay className="example-overlay">{point.label_text}</ROverlay>
+          </RFeature>
+        ))}
+      </RLayerVector>
+    </RMap>
   );
 }

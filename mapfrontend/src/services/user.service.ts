@@ -3,17 +3,15 @@ import jwt_decode from "jwt-decode";
 import { TokenPair } from "../classes/tokenPair";
 import { TokenData } from "../classes/tokenData";
 import { User } from "../classes/user";
+import authService from "./auth.service";
 
 class UserService {
   // TODO: get API URL from .env
   API_URL = values.API_URL;
   async fetchUserData(): Promise<User | null> {
     // decode jwt token to get user's id
-
-    if (localStorage.getItem("token")) {
-      let tokenPair: TokenPair = JSON.parse(
-        localStorage.getItem("token") || "{}"
-      );
+    let tokenPair = authService.getTokens();
+    if (tokenPair != null) {
       console.log("Decoding token", tokenPair);
       let decodedToken: TokenData = jwt_decode(tokenPair.access);
 
