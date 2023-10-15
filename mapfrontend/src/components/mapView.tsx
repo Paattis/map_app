@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserPoint } from "../classes/userpoint";
 
 import { fromLonLat, toLonLat } from "ol/proj";
-import { Point } from "ol/geom";
+import { Point, Polygon } from "ol/geom";
 import "ol/ol.css";
 
 import {
@@ -24,7 +24,39 @@ export interface IMapViewProps {
 }
 
 export default function MapView(props: IMapViewProps) {
-  const [newUserPoint, setNewUserPoint] = useState<UserPoint>();
+  const [tempUserPoint, setTempUserPoint] = useState<UserPoint>();
+  const [userPoints, setUserPoints] = useState<Array<UserPoint>>(
+    props.userPoints
+  );
+
+  useEffect(() => {
+    setUserPoints(props.userPoints);
+  }, [props.userPoints]);
+
+  /**
+   * Updates the temporary userpoint in the userPoints list in the state.
+   * This updates the map
+   */
+  const updateNewUserPoint = (point: UserPoint) => {
+    let lastUserPoint = userPoints[userPoints.length - 1];
+    // only add a new unsaved marker on the map if we haven't done so already
+    if (lastUserPoint.id != null) {
+      userPoints.push(point);
+    } else {
+      // otherwise just replace the last unsaved one with the new one we made
+      userPoints[userPoints.length - 1] = point;
+    }
+    setUserPoints(userPoints);
+    setTempUserPoint(point);
+    console.log("updateNewUserPoint called", point);
+  };
+
+  const getUserPointMarker = (point: UserPoint) => {
+    if (!props.user || !point.user) {
+      return "🔵";
+    }
+    return props.user.id == point.user.id ? "📍" : "🔵";
+  };
 
   return (
     <div>
@@ -38,11 +70,12 @@ export default function MapView(props: IMapViewProps) {
         }}
         onClick={(e) => {
           if (props.user) {
+            // convert the on-screen points to Lon/Lat coordinates
             const coords = toLonLat(e.map.getCoordinateFromPixel(e.pixel));
 
+            // create a new temporary userPoint
             let newUserPoint = {
-              id: -1,
-              label_text: "foo",
+              label_text: "",
               user: { id: props.user.id, username: props.user.username },
               position: {
                 type: "Point",
@@ -50,29 +83,35 @@ export default function MapView(props: IMapViewProps) {
               },
             };
 
-            setNewUserPoint(newUserPoint);
-            console.log("newPoint");
+            setTempUserPoint(newUserPoint);
+            updateNewUserPoint(newUserPoint);
           }
         }}
       >
         <ROSM />
         <RLayerVector zIndex={10}>
-          <RStyle.RStyle></RStyle.RStyle>
-          {props.userPoints.map((point) => (
+          {userPoints.map((point) => (
             <RFeature
-              key={point.id}
+              key={point.id || -1}
               geometry={new Point(fromLonLat(point.position.coordinates))}
             >
-              <ROverlay className="example-overlay">
+              <RStyle.RStyle>
+                <RStyle.RStroke width={2} color={"yellow"} />
+              </RStyle.RStyle>
+              <ROverlay>
+                {getUserPointMarker(point)}
+
                 {point.label_text}
               </ROverlay>
-              {/* {<RInteraction.RDraw type={"Point"} />} */}
             </RFeature>
           ))}
         </RLayerVector>
       </RMap>
-      {newUserPoint ? (
-        <NewUserPointForm userPoint={newUserPoint}></NewUserPointForm>
+      {tempUserPoint ? (
+        <NewUserPointForm
+          userPoint={tempUserPoint}
+          updateNewUserPoint={updateNewUserPoint}
+        ></NewUserPointForm>
       ) : (
         "Select a point"
       )}

@@ -7,9 +7,11 @@ import authService from "../services/auth.service";
 import { UserPoint } from "../classes/userpoint";
 import UserPointService from "../services/userpoint.service";
 import { useState } from "react";
+import "ol/ol.css";
 
 export interface INewUserPointFormProps {
   userPoint: UserPoint;
+  updateNewUserPoint: Function;
 }
 
 export default function NewUserPointForm(props: INewUserPointFormProps) {
@@ -19,6 +21,9 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
     UserPointService.createUserPoint(userPoint)
       .then((r) => {
         console.log("Userpoint added!", r);
+
+        // Confirms that the latest (i.e. temporary) userPoint has been saved
+        props.updateNewUserPoint(r);
       })
       .catch((err) => {
         console.log("Error when adding", err);
@@ -43,6 +48,7 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
         onChange={(e) => {
           userPoint.label_text = e.target.value;
           setUserPoint(userPoint);
+          props.updateNewUserPoint(userPoint);
         }}
       ></TextField>
       <Button
