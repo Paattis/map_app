@@ -8,6 +8,7 @@ import { UserPoint } from "../classes/userpoint";
 import UserPointService from "../services/userpoint.service";
 import { useState } from "react";
 import "ol/ol.css";
+import { User } from "../classes/user";
 
 export interface INewUserPointFormProps {
   userPoint: UserPoint;
@@ -18,18 +19,26 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
   const [userPoint, setUserPoint] = useState<UserPoint>(props.userPoint);
   const [labelText, setLabelText] = useState<string>("");
 
-  const submitNewPoint = (userPoint: UserPoint) => {
+  const submitNewUserPoint = (userPoint: UserPoint) => {
     UserPointService.createUserPoint(userPoint)
-      .then((r) => {
-        console.log("Userpoint added!", r);
+      .then((userPoint) => {
+        console.log("Userpoint added!", userPoint);
 
         // Confirms that the latest (i.e. temporary) userPoint has been saved
-        props.updateNewUserPoint(r);
+        props.updateNewUserPoint(userPoint);
         setLabelText("");
       })
       .catch((err) => {
         console.log("Error when adding", err);
       });
+  };
+
+  const updateUserPoint = (userPoint: UserPoint) => {
+    UserPointService.updateUserPoint(userPoint).then((userPoint) => {
+      console.log("Userpoint updated!", userPoint);
+      setLabelText("");
+      setUserPoint(userPoint);
+    });
   };
 
   React.useEffect(() => {
@@ -43,10 +52,13 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
 
   return (
     <>
-      <h1>Position at {userPoint.position.coordinates.join(" ")}</h1>
+      <h3>
+        {userPoint.id ? "Editing" : "Adding a"} point at{" "}
+        {userPoint.position.coordinates.join(", ")}
+      </h3>
       <TextField
         label="Label for point"
-        value={labelText}
+        value={userPoint.label_text}
         onChange={(e) => {
           userPoint.label_text = e.target.value;
           setUserPoint(userPoint);
@@ -57,8 +69,10 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
       <Button
         variant="contained"
         onClick={() => {
-          if (userPoint) {
-            submitNewPoint(userPoint);
+          if (!userPoint.id) {
+            submitNewUserPoint(userPoint);
+          } else {
+            updateUserPoint(userPoint);
           }
         }}
       >

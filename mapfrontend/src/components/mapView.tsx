@@ -16,6 +16,7 @@ import {
 } from "rlayers";
 import { User } from "../classes/user";
 import NewUserPointForm from "./newUserPointForm";
+import { RFill, RStroke } from "rlayers/style";
 //import locationIcon from "./svg/location.svg";
 
 export interface IMapViewProps {
@@ -24,7 +25,12 @@ export interface IMapViewProps {
 }
 
 export default function MapView(props: IMapViewProps) {
-  const [tempUserPoint, setTempUserPoint] = useState<UserPoint>();
+  // the userPoint we are currently adding or editing
+  const [currentUserPoint, setCurrentUserPoint] = useState<UserPoint>();
+
+  // disables click events on the map pane itself when true
+  // prevents firing both the map's and the feature's click events at the same time
+  const [mouseOverFeature, setMouseOverFeature] = useState(Boolean);
   const [userPoints, setUserPoints] = useState<Array<UserPoint>>(
     props.userPoints
   );
@@ -41,21 +47,58 @@ export default function MapView(props: IMapViewProps) {
     let lastUserPoint = userPoints[userPoints.length - 1];
     // only add a new unsaved marker on the map if we haven't done so already
     if (lastUserPoint.id != null) {
+      console.log("add new point to map");
       userPoints.push(point);
     } else {
+      console.log("move existing 'new' point");
       // otherwise just replace the last unsaved one with the new one we made
       userPoints[userPoints.length - 1] = point;
     }
-    setUserPoints(userPoints);
-    setTempUserPoint(point);
+    //setUserPoints(userPoints);
     console.log("updateNewUserPoint called", point);
+    setCurrentUserPoint(point);
   };
 
-  const getUserPointMarker = (point: UserPoint) => {
-    if (!props.user || !point.user) {
-      return "🔵";
+  /**
+   * Gets the userPoint with the given id from the userPoints list and
+   * sets it as the current userPoint to be edited
+   * @param {number} id
+   */
+  const chooseUserPoint = (id: number) => {
+    let userPoint = userPoints.find((point) => point.id == id);
+    setCurrentUserPoint(userPoint);
+    console.log("Calling edit");
+    // discard the userPoint that isnt yet in the database
+    // if we were in the process of creating one before choosing to instead
+    // make an edit to an existing userPoint
+    if (userPoints[userPoints.length - 1].id == null) {
+      userPoints.pop();
     }
-    return props.user.id == point.user.id ? "📍" : "🔵";
+  };
+
+  /**
+   * Returns true if the given userPoint is owned by the currently logged in user.
+   * @param {UserPoint} point
+   * */
+  const isOwnUserPoint = (point: UserPoint) => {
+    // console.log("Ownership for point", point.id, point.label_text);
+    if (!props.user || !point.user) {
+      return false;
+    }
+
+    return props.user.id == point.user.id;
+  };
+
+  /**
+   * Returns the correct colour depending on if the point is owned by
+   * the currently logged in user or not.
+   * @param {UserPoint} point
+   **/
+  const getUserPointColour = (point: UserPoint) => {
+    const ownColour = "#fffb00";
+    const otherColour = "#008cff";
+
+    return isOwnUserPoint(point) ? ownColour : otherColour;
   };
 
   return (
@@ -68,7 +111,7 @@ export default function MapView(props: IMapViewProps) {
           zoom: 10,
         }}
         onClick={(e) => {
-          if (props.user) {
+          if (props.user && !mouseOverFeature) {
             // convert the on-screen points to Lon/Lat coordinates
             const coords = toLonLat(e.map.getCoordinateFromPixel(e.pixel));
 
@@ -82,31 +125,54 @@ export default function MapView(props: IMapViewProps) {
               },
             };
 
-            setTempUserPoint(newUserPoint);
             updateNewUserPoint(newUserPoint);
+
+            console.log("userpoints", userPoints);
           }
         }}
       >
         <ROSM />
         <RLayerVector zIndex={10}>
-          {/* For some reason having an empty RStyle disables the default circles */}
-          <RStyle.RStyle></RStyle.RStyle>
-          {userPoints.map((point) => (
-            <RFeature
-              key={point.id || -1}
-              geometry={new Point(fromLonLat(point.position.coordinates))}
-            >
-              <ROverlay className="example-overlay">
-                {getUserPointMarker(point)}
-                {point.label_text}
-              </ROverlay>
-            </RFeature>
-          ))}
+          {userPoints.map((point) => {
+            return (
+              <>
+                <RStyle.RStyle>
+                  <RStyle.RCircle radius={6}>
+                    <RStyle.RStroke
+                      color={"#008cff"}
+                      width={1}
+                    ></RStyle.RStroke>
+                    <RStyle.RFill color={"#008cff"}></RStyle.RFill>
+                  </RStyle.RCircle>
+                </RStyle.RStyle>
+                <RFeature
+                  key={point.id}
+                  geometry={new Point(fromLonLat(point.position.coordinates))}
+                  onClick={(e) => {
+                    // dig out the userPoint's id from the event
+                    let target = e.target;
+                    let userPointId = target.getProperties().id;
+                    chooseUserPoint(userPointId);
+
+                    return;
+                  }}
+                  onPointerEnter={() => setMouseOverFeature(true)}
+                  onPointerLeave={() => setMouseOverFeature(false)}
+                  properties={point}
+                >
+                  <ROverlay className="example-overlay">
+                    {isOwnUserPoint(point) && point.id ? "⭐" : ""}
+                    {point.label_text}
+                  </ROverlay>
+                </RFeature>
+              </>
+            );
+          })}
         </RLayerVector>
       </RMap>
-      {tempUserPoint ? (
+      {currentUserPoint ? (
         <NewUserPointForm
-          userPoint={tempUserPoint}
+          userPoint={currentUserPoint}
           updateNewUserPoint={updateNewUserPoint}
         ></NewUserPointForm>
       ) : !props.user ? (

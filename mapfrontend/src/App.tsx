@@ -38,7 +38,9 @@ function App() {
         <LoginForm />
       ) : (
         <>
-          <h3>Logged in as {user.username}</h3>
+          <h3>
+            Logged in as {user.username} id: {user.id}
+          </h3>
           <Button variant="contained" onClick={logOut}>
             Log out
           </Button>
