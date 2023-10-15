@@ -61,7 +61,6 @@ export default function MapView(props: IMapViewProps) {
   return (
     <div>
       <RMap
-        className="example-map"
         width={"100%"}
         height={"500px"}
         initial={{
@@ -90,17 +89,15 @@ export default function MapView(props: IMapViewProps) {
       >
         <ROSM />
         <RLayerVector zIndex={10}>
+          {/* For some reason having an empty RStyle disables the default circles */}
+          <RStyle.RStyle></RStyle.RStyle>
           {userPoints.map((point) => (
             <RFeature
               key={point.id || -1}
               geometry={new Point(fromLonLat(point.position.coordinates))}
             >
-              <RStyle.RStyle>
-                <RStyle.RStroke width={2} color={"yellow"} />
-              </RStyle.RStyle>
-              <ROverlay>
+              <ROverlay className="example-overlay">
                 {getUserPointMarker(point)}
-
                 {point.label_text}
               </ROverlay>
             </RFeature>
@@ -112,8 +109,10 @@ export default function MapView(props: IMapViewProps) {
           userPoint={tempUserPoint}
           updateNewUserPoint={updateNewUserPoint}
         ></NewUserPointForm>
+      ) : !props.user ? (
+        <h3>Please log in to add a point.</h3>
       ) : (
-        "Select a point"
+        <></>
       )}
     </div>
   );

@@ -40,7 +40,7 @@ function App() {
         <LoginForm />
       ) : (
         <>
-          <h1>Welcome {user.email}</h1>
+          <h3>Logged in as {user.username}</h3>
           <Button variant="contained" onClick={logOut}>
             Log out
           </Button>
