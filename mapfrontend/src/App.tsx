@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import UserService from "./services/user.service";
 import AuthService from "./services/auth.service";
 import LoginForm from "./components/loginForm";
 import { User } from "./classes/user";
@@ -28,9 +27,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    UserService.fetchUserData().then((user) => {
-      setUser(user);
-    });
+    AuthService.getUserData().then((user) => setUser(user));
+    console.log("User is", user);
   }, [token]);
 
   return (

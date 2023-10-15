@@ -3,6 +3,7 @@ import { TokenPair } from "../classes/tokenPair";
 import values from "../classes/values";
 import jwt_decode from "jwt-decode";
 import { TokenData } from "../classes/tokenData";
+import { User } from "../classes/user";
 
 class AuthService {
   // TODO: get API URL from .env
@@ -68,11 +69,43 @@ class AuthService {
       });
   }
 
+  /**
+   * Gets the user's data stored in the JWT token or null if there is no token.
+   * @returns {User|null}
+   */
+  async getUserData(): Promise<User | null> {
+    // decode jwt token to get user's id
+    let tokenPair = await this.getTokens();
+
+    if (tokenPair == null) {
+      return null;
+    }
+
+    console.log("Decoding token", tokenPair);
+    let accessToken = tokenPair.access;
+    let decodedToken: TokenData = jwt_decode(accessToken);
+    return {
+      id: decodedToken.user_id,
+      username: decodedToken.username,
+      email: decodedToken.email,
+    };
+  }
+
+  /**
+   * Decodes the given JWT access token
+   * @param {string} token
+   * @returns {TokenData}
+   */
   decodeToken(token: string) {
     let decoded_token: TokenData = jwt_decode(token);
     return decoded_token;
   }
 
+  /**
+   * Convenience method, parses a JWT access token from JSON.
+   * @param {string} token
+   * @returns {TokenPair}
+   */
   parseToken(token: string): TokenPair {
     return JSON.parse(token);
   }
