@@ -18,6 +18,8 @@ import { User } from "../classes/user";
 import NewUserPointForm from "./newUserPointForm";
 import { RFill, RStroke } from "rlayers/style";
 //import locationIcon from "./svg/location.svg";
+import { Position } from "../classes/position";
+import userpointService from "../services/userpoint.service";
 
 export interface IMapViewProps {
   userPoints: Array<UserPoint>;
@@ -38,6 +40,17 @@ export default function MapView(props: IMapViewProps) {
   useEffect(() => {
     setUserPoints(props.userPoints);
   }, [props.userPoints]);
+
+  /**
+   * Replaces the userPoint at the given index with the new userPoint given as a parameter.
+   * Meant for updating data in state.
+   * @param {point}
+   * */
+  const changePoint = (index: number, point: UserPoint) => {
+    userPoints[index] = point;
+    setUserPoints(userPoints);
+    console.log("Changed userPoint", point, "at index", index);
+  };
 
   /**
    * Updates the temporary userpoint in the userPoints list in the state.
@@ -140,7 +153,7 @@ export default function MapView(props: IMapViewProps) {
                   <RStyle.RCircle radius={6}>
                     <RStyle.RStroke
                       color={"#008cff"}
-                      width={1}
+                      width={5}
                     ></RStyle.RStroke>
                     <RStyle.RFill color={"#008cff"}></RStyle.RFill>
                   </RStyle.RCircle>
@@ -169,6 +182,29 @@ export default function MapView(props: IMapViewProps) {
             );
           })}
         </RLayerVector>
+        <RInteraction.RTranslate
+          onTranslateEnd={(e) => {
+            let feature = e.features.item(0);
+            let point = feature.getProperties() as UserPoint;
+            if (!isOwnUserPoint(point)) {
+              return;
+            }
+            console.log("moved point", point);
+            let index = userPoints.findIndex((up) => point.id);
+
+            let newCoords = toLonLat(
+              (feature.getGeometry() as Point).getFirstCoordinate()
+            );
+
+            point.position.coordinates = newCoords;
+
+            // replace the userPoint in the state
+            changePoint(index, point);
+
+            // finally update the userpoint through the API
+            userpointService.updateUserPoint(point);
+          }}
+        />
       </RMap>
       {currentUserPoint ? (
         <NewUserPointForm
