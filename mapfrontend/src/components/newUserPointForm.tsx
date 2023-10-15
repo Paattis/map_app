@@ -13,6 +13,7 @@ import { User } from "../classes/user";
 export interface INewUserPointFormProps {
   userPoint: UserPoint;
   updateNewUserPoint: Function;
+  changeUserPoint: Function;
 }
 
 export default function NewUserPointForm(props: INewUserPointFormProps) {

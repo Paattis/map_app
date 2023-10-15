@@ -20,6 +20,7 @@ import { RFill, RStroke } from "rlayers/style";
 //import locationIcon from "./svg/location.svg";
 import { Position } from "../classes/position";
 import userpointService from "../services/userpoint.service";
+import { Feature } from "ol";
 
 export interface IMapViewProps {
   userPoints: Array<UserPoint>;
@@ -42,14 +43,12 @@ export default function MapView(props: IMapViewProps) {
   }, [props.userPoints]);
 
   /**
-   * Replaces the userPoint at the given index with the new userPoint given as a parameter.
-   * Meant for updating data in state.
+   * Replaces the userPoint in the state with the new userPoint given as a parameter.
    * @param {point}
    * */
-  const changePoint = (index: number, point: UserPoint) => {
-    userPoints[index] = point;
+  const changeUserPoint = (point: UserPoint) => {
+    userPoints[userPoints.findIndex((up) => point.id == up.id)] = point;
     setUserPoints(userPoints);
-    console.log("Changed userPoint", point, "at index", index);
   };
 
   /**
@@ -60,15 +59,12 @@ export default function MapView(props: IMapViewProps) {
     let lastUserPoint = userPoints[userPoints.length - 1];
     // only add a new unsaved marker on the map if we haven't done so already
     if (lastUserPoint.id != null) {
-      console.log("add new point to map");
       userPoints.push(point);
     } else {
-      console.log("move existing 'new' point");
       // otherwise just replace the last unsaved one with the new one we made
       userPoints[userPoints.length - 1] = point;
     }
     //setUserPoints(userPoints);
-    console.log("updateNewUserPoint called", point);
     setCurrentUserPoint(point);
   };
 
@@ -80,7 +76,6 @@ export default function MapView(props: IMapViewProps) {
   const chooseUserPoint = (id: number) => {
     let userPoint = userPoints.find((point) => point.id == id);
     setCurrentUserPoint(userPoint);
-    console.log("Calling edit");
     // discard the userPoint that isnt yet in the database
     // if we were in the process of creating one before choosing to instead
     // make an edit to an existing userPoint
@@ -94,7 +89,6 @@ export default function MapView(props: IMapViewProps) {
    * @param {UserPoint} point
    * */
   const isOwnUserPoint = (point: UserPoint) => {
-    // console.log("Ownership for point", point.id, point.label_text);
     if (!props.user || !point.user) {
       return false;
     }
@@ -139,8 +133,6 @@ export default function MapView(props: IMapViewProps) {
             };
 
             updateNewUserPoint(newUserPoint);
-
-            console.log("userpoints", userPoints);
           }
         }}
       >
@@ -189,8 +181,6 @@ export default function MapView(props: IMapViewProps) {
             if (!isOwnUserPoint(point)) {
               return;
             }
-            console.log("moved point", point);
-            let index = userPoints.findIndex((up) => point.id);
 
             let newCoords = toLonLat(
               (feature.getGeometry() as Point).getFirstCoordinate()
@@ -199,10 +189,13 @@ export default function MapView(props: IMapViewProps) {
             point.position.coordinates = newCoords;
 
             // replace the userPoint in the state
-            changePoint(index, point);
+            changeUserPoint(point);
 
             // finally update the userpoint through the API
-            userpointService.updateUserPoint(point);
+            // don't save through API if drag&dropping an unsaved point
+            if (point.id != null) {
+              userpointService.updateUserPoint(point);
+            }
           }}
         />
       </RMap>
@@ -210,6 +203,7 @@ export default function MapView(props: IMapViewProps) {
         <NewUserPointForm
           userPoint={currentUserPoint}
           updateNewUserPoint={updateNewUserPoint}
+          changeUserPoint={changeUserPoint}
         ></NewUserPointForm>
       ) : !props.user ? (
         <h3>Please log in to add a point.</h3>
