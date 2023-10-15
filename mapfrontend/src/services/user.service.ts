@@ -10,7 +10,7 @@ class UserService {
   API_URL = values.API_URL;
   async fetchUserData(): Promise<User | null> {
     // decode jwt token to get user's id
-    let tokenPair = authService.getTokens();
+    let tokenPair = await authService.getTokens();
     if (tokenPair != null) {
       console.log("Decoding token", tokenPair);
       let decodedToken: TokenData = jwt_decode(tokenPair.access);
@@ -25,6 +25,7 @@ class UserService {
       }).then((r) => {
         if (!r.ok) return null;
         let data = r.json();
+        console.log("Saving", data, "as user");
         localStorage.setItem("user", JSON.stringify(data));
         return data;
       });

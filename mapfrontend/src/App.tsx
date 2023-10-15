@@ -14,7 +14,7 @@ function App() {
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token");
   });
-  const [user, setUser] = useState<User | null>();
+  const [user, setUser] = useState<User | null>(null);
 
   const [userPoints, setUserPoints] = useState<Array<UserPoint>>([]);
 
@@ -46,7 +46,7 @@ function App() {
           </Button>
         </>
       )}
-      <MapView userPoints={userPoints}></MapView>
+      <MapView userPoints={userPoints} user={user}></MapView>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 export type TokenData = {
   token_type: string;
-  exp: string;
-  iat: string;
+  exp: number;
+  iat: number;
   jti: string;
-  user_id: string;
+  user_id: number;
 };
