@@ -1,4 +1,3 @@
-import { TokenPair } from "../classes/tokenPair";
 import values from "../classes/values";
 
 class AuthService {
@@ -8,16 +7,27 @@ class AuthService {
     console.log(process.env);
     let url = `${this.API_URL}/token/`;
     console.log("Url", url);
-    const tokenPair: TokenPair = await fetch(url, {
+    return fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username: username, password: password }),
-    }).then((r) => r.json());
-    if (tokenPair.access) {
-      localStorage.setItem("user", JSON.stringify(tokenPair));
-    }
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.access) {
+          throw data;
+        }
+        localStorage.setItem("token", JSON.stringify(data));
+        return data;
+      });
+    //.catch((err) => console.log("err", err));
+  }
+
+  logOut() {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   }
 }
 
