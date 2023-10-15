@@ -16,6 +16,7 @@ export interface INewUserPointFormProps {
 
 export default function NewUserPointForm(props: INewUserPointFormProps) {
   const [userPoint, setUserPoint] = useState<UserPoint>(props.userPoint);
+  const [labelText, setLabelText] = useState<string>("");
 
   const submitNewPoint = (userPoint: UserPoint) => {
     UserPointService.createUserPoint(userPoint)
@@ -24,6 +25,7 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
 
         // Confirms that the latest (i.e. temporary) userPoint has been saved
         props.updateNewUserPoint(r);
+        setLabelText("");
       })
       .catch((err) => {
         console.log("Error when adding", err);
@@ -44,10 +46,11 @@ export default function NewUserPointForm(props: INewUserPointFormProps) {
       <h1>Position at {userPoint.position.coordinates.join(" ")}</h1>
       <TextField
         label="Label for point"
-        defaultValue={userPoint.label_text}
+        value={labelText}
         onChange={(e) => {
           userPoint.label_text = e.target.value;
           setUserPoint(userPoint);
+          setLabelText(userPoint.label_text);
           props.updateNewUserPoint(userPoint);
         }}
       ></TextField>
