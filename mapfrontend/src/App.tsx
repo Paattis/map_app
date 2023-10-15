@@ -6,6 +6,7 @@ import AuthService  from './services/auth.service';
 import LoginForm from './components/loginForm';
 import { User } from './classes/user';
 import Button from '@mui/material/Button';
+import MapView from './components/mapView';
 
 function App() {
   const [token, setToken] = useState(() => {
@@ -34,7 +35,7 @@ function App() {
         !user ? <LoginForm/>
         : <><h1>Welcome {user.email}</h1><Button variant="contained" onClick={logOut}>Log out</Button></>
       }
-      
+      <MapView></MapView>
     </div>
   );
 }
