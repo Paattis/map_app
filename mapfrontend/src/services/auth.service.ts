@@ -1,4 +1,3 @@
-import jwtDecode from "jwt-decode";
 import { TokenPair } from "../classes/tokenPair";
 import values from "../classes/values";
 import jwt_decode from "jwt-decode";
