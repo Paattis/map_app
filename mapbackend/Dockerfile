@@ -12,7 +12,8 @@ RUN pip install -r requirements.txt
 
 COPY ./entrypoint.sh .
 RUN chmod +x /src/backend/entrypoint.sh
-
+COPY ./entrypoint.prod.sh .
+RUN chmod +x /src/backend/entrypoint.prod.sh
 
 # install dependencies for PostGIS
 RUN apt-get update

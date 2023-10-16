@@ -2,11 +2,10 @@ services:
   frontend:
     build: ./mapfrontend
     command: npm start
+    environment:
+      - REACT_APP_DJANGO_URL=${REACT_APP_DJANGO_URL}
     ports:
       - 3000:3000
-    volumes:
-      - /src/frontend/node_modules
-      - ./mapfrontend:/src/frontend
   backend:
     build: ./mapbackend
     command: sh /src/backend/entrypoint.sh
