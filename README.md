@@ -25,6 +25,17 @@ Create the first superuser by running the following command and following the on
 $ docker-compose exec backend python manage.py createsuperuser
 ```
 
+By default the backend should be available at `http://localhost/8000/api` and the frontend at `http://localhost:3000`.
+
+### Initial data
+
+When running in development mode the application has some data pre-loaded as well as some users. With the following username-password pairs.
+
+| username         | password |
+| ---------------- | -------- |
+| MattiMeikalainen | password |
+| TeuvoTestaaja    | password |
+
 ## Running in production mode
 
 First you need to create an `.env.prod` file and fill it up with the relevant settings. After that you can run
@@ -37,7 +48,13 @@ to have the application start in production mode.
 
 ## Documentation
 
-Documentation for the REST Api is available at the `/api/docs` endpoint
+### Documentation page
+
+Documentation for the REST Api is available at the `/api/docs` endpoint. Its accessible with a superuser account.
+
+## Admin page
+
+Admin page for the Django backend is available at the `/api/admin/` endpoint.
 
 ## Backend
 

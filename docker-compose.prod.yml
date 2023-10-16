@@ -1,8 +1,11 @@
 services:
   frontend:
-    build: ./mapfrontend
+    build: 
+      context: ./mapfrontend
+      args:
+        - REACT_APP_DJANGO_URL=${REACT_APP_DJANGO_URL}
+      dockerfile: Dockerfile.prod
     environment:
-      - REACT_APP_DJANGO_URL=${REACT_APP_DJANGO_URL}
       - NODE_ENV=production
     env_file:
       - ./.env.prod
@@ -35,9 +38,9 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h db"
         ]
-      interval: 2s
+      interval: 5s
       timeout: 5s
       retries: 5
   nginx:
@@ -49,7 +52,7 @@ services:
       - frontend
     volumes:
       - static_volume:/src/backend/staticfiles
-      - frontend_volume:/usr/share/nginx/html
+      - frontend_volume:/src/frontend/build
 
 volumes:
   postgres_data:

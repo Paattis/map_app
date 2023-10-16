@@ -5,15 +5,8 @@ WORKDIR /src/frontend/
 # install dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install
-
-COPY ./entrypoint.prod.sh .
-RUN chmod +x /src/frontend/entrypoint.prod.sh
-
 # copy app files
-COPY ./ ./
-RUN npm run build 
 
-FROM nginx
-EXPOSE 3000
-COPY --from=builder /serc/frontend/build /usr/share/nginx/html
+RUN npm install
+COPY ./ ./
+RUN npm run build

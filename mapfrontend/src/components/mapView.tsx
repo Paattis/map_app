@@ -58,7 +58,7 @@ export default function MapView(props: IMapViewProps) {
   const updateNewUserPoint = (point: UserPoint) => {
     let lastUserPoint = userPoints[userPoints.length - 1];
     // only add a new unsaved marker on the map if we haven't done so already
-    if (lastUserPoint.id != null) {
+    if (!lastUserPoint || lastUserPoint.id != null) {
       userPoints.push(point);
     } else {
       // otherwise just replace the last unsaved one with the new one we made
@@ -154,11 +154,13 @@ export default function MapView(props: IMapViewProps) {
                   key={point.id}
                   geometry={new Point(fromLonLat(point.position.coordinates))}
                   onClick={(e) => {
-                    // don't open the edit dialogue for unauthorized users
-                    if (!isOwnUserPoint(point)) return;
                     // dig out the userPoint's id from the event
                     let target = e.target;
                     let userPointId = target.getProperties().id;
+
+                    // don't open the edit dialogue for unauthorized users
+                    if (!isOwnUserPoint(e.target.getProperties() as UserPoint))
+                      return;
                     chooseUserPoint(userPointId);
 
                     return;
