@@ -33,7 +33,7 @@ CORS_ALLOWED_ORIGINS = os.environ.get("FRONTEND_HOSTS").split(" ")
 print(CORS_ALLOWED_ORIGINS)
 
 
-STATIC_URL = "/static/"
+STATIC_URL = "/django_static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Application definition

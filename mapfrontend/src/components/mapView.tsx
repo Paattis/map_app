@@ -154,6 +154,8 @@ export default function MapView(props: IMapViewProps) {
                   key={point.id}
                   geometry={new Point(fromLonLat(point.position.coordinates))}
                   onClick={(e) => {
+                    // don't open the edit dialogue for unauthorized users
+                    if (!isOwnUserPoint(point)) return;
                     // dig out the userPoint's id from the event
                     let target = e.target;
                     let userPointId = target.getProperties().id;

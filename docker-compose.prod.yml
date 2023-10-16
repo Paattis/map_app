@@ -1,4 +1,15 @@
 services:
+  frontend:
+    build: ./mapfrontend
+    environment:
+      - REACT_APP_DJANGO_URL=${REACT_APP_DJANGO_URL}
+      - NODE_ENV=production
+    env_file:
+      - ./.env.prod
+    ports:
+      - 3000:3000
+    volumes:
+      - frontend_volume:/src/frontend/build
   backend:
     build: ./mapbackend
     entrypoint: /src/backend/entrypoint.prod.sh
@@ -38,7 +49,9 @@ services:
       - frontend
     volumes:
       - static_volume:/src/backend/staticfiles
+      - frontend_volume:/usr/share/nginx/html
 
 volumes:
   postgres_data:
   static_volume:
+  frontend_volume:
